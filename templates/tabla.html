@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>¿Cuando Abre? - Tabla</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style type="text/css">
+tr:nth-child(even) {background: #CCC}
+tr:nth-child(odd) {background: #FFF}
+</style>
+</head>
+<body>
+<table>
+
+<tr>
+<th>Lugar</th>
+<th>Horarios</th>
+<th>¿Abierto?</th>
+</tr>
+
+{% for node in nodes %}
+<tr>
+<td><a href="{{ node.url }}">{{ node.name }}</a></td>
+<td>{{ node.hours }}</td>
+<td>?</td>
+</tr>
+{% endfor %}
+
+</table>
+</body>
+</html>

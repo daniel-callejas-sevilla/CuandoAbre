@@ -4,7 +4,7 @@
 #  $ FLASK_APP=test.py flask run
 
 import overpy
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 
 @app.route("/", defaults={'rect': '43.572,7.014,43.578,7.026'})
@@ -13,22 +13,13 @@ def hours(rect):
     o = overpy.Overpass()
     q = "node[opening_hours]({});out;".format(rect) # TODO filter rect before injecting
     r = o.query(q)
-    
-    output = ""
-    
-    output += "<table border='1'>"
-    for node in r.nodes:
-        output += "<tr>"
-        node_url = "https://www.openstreetmap.org/node/{}".format(node.id)
-        
-        output += "<td><a href='{}'>{}</a></td>".format(node_url, node.tags['name'])
-        
-        output += "<td>"
-        for b in node.tags['opening_hours'].split(';'):
-            output += b + "<br />"
-        output += "</td>"
-        output += "<td>?</td>"
-        output += "</tr>"
-    output += "</table>"
 
-    return output
+    results = []    
+    for node in r.nodes:
+        item = { 'name': node.tags['name'],
+                 'url': "https://www.openstreetmap.org/node/{}".format(node.id),
+                 'hours': node.tags['opening_hours'].split(';'),
+               }
+        results.append(item)
+
+    return render_template('tabla.html', nodes=results)
