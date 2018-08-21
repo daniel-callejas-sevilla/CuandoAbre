@@ -36,7 +36,13 @@ updateLocation();
 <tr>
 <td><a href="{{ node.url }}">{{ node.name }}</a></td>
 <td>{{ node.hours }}</td>
-<td>?</td>
+<td>
+    {% if node.open %}
+        <span style="color: green;">✓</span>
+    {% else %}
+        <span style="color: red;">✘</span>
+    {% endif %}
+</td>
 </tr>
 {% endfor %}
 

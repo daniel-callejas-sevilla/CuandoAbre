@@ -9,5 +9,6 @@ python_version = "3.5"
 [packages]
 flask = "*"
 overpy = "*"
+osm-opening-hours = "*"
 
 [dev-packages]
