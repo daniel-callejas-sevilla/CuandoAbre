@@ -7,8 +7,23 @@
 tr:nth-child(even) {background: #CCC}
 tr:nth-child(odd) {background: #FFF}
 </style>
+<script type="text/javascript">
+var loc;
+function updateLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (p){
+            loc = p;
+            x = document.getElementById('testPos');
+            x.innerHTML = "Latitud: " + loc.coords.latitude + "<br/>Longitud: " +
+            loc.coords.longitude;
+        });
+    }
+}
+updateLocation();
+</script>
 </head>
 <body>
+<div id="testPos">(Esperando una localización…)</div>
 <table>
 
 <tr>
