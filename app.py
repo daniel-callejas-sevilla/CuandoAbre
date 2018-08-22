@@ -23,17 +23,16 @@ def hours():
     results = []
     
     if when == "now":
-        now = datetime.datetime.today()    
-        today = DAYS[now.weekday()]
-        now = now.strftime("%H:%M")
+        now = datetime.datetime.today() # TODO tz awareness
+        day, hour = DAYS[now.weekday()], now.strftime("%H:%M")
     else:
-        today, now = when.split(" ")
-    print(today, now)
+        day, hour = when.split(" ")
+
     for node in r.nodes:
         item = { 'name': node.tags['name'],
                  'url': "https://www.openstreetmap.org/node/{}".format(node.id),
                  'hours': node.tags['opening_hours'].split(';'),
-                 'open': OpeningHours(node.tags['opening_hours']).is_open(today, now),
+                 'open': OpeningHours(node.tags['opening_hours']).is_open(day, hour),
                }
         results.append(item)
 
