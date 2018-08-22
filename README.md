@@ -8,7 +8,7 @@ Work in progress
 * Show a popup with a map when clicking on a name
 * Show distance to each item
 * Calculate time-to-reach and decide if it will be closing by the ETA
-* Lock items to make sure they're always in the list (even if far away)
+* Lock items to make sure they're always in the list (even if far away from current position)
 * Define radius of search
 * Cache results to avoid strain on overpass-turbo (needed?)
-
+* Color-code results closing soon
