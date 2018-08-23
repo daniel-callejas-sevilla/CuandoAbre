@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-# Run with:
-#  $ FLASK_APP=test.py flask run
-
 import overpy
 from osm_time.opening_hours import OpeningHours
 from flask import Flask, render_template, request
@@ -37,3 +34,7 @@ def hours():
         results.append(item)
 
     return render_template('tabla.html', nodes=results)
+    
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
+    
