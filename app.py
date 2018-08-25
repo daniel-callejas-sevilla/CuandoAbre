@@ -17,7 +17,7 @@ def hours():
     when = request.args.get('when', 'now')
 
     o = overpy.Overpass()
-    q = "node[opening_hours]({});out;".format(rect) # TODO filter rect before injecting
+    q = f"node[opening_hours]({rect});out;" # TODO filter rect before injecting
     r = o.query(q)
 
     results = []
@@ -31,7 +31,7 @@ def hours():
     print(today, now)
     for node in r.nodes:
         item = { 'name': node.tags['name'],
-                 'url': "https://www.openstreetmap.org/node/{}".format(node.id),
+                 'url': f"https://www.openstreetmap.org/node/{node.id}",
                  'hours': node.tags['opening_hours'].split(';'),
                  'open': OpeningHours(node.tags['opening_hours']).is_open(today, now),
                }
