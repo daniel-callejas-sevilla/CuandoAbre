@@ -10,5 +10,6 @@ python_version = "3.6"
 flask = "*"
 overpy = "*"
 osm-opening-hours = "*"
+gunicorn = "*"
 
 [dev-packages]
