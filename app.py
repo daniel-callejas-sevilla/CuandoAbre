@@ -17,14 +17,14 @@ def hours():
     q = f"node[opening_hours]({rect});out;" # TODO filter rect before injecting
     r = o.query(q)
 
-    results = []
-    
     if when == "now":
         now = datetime.datetime.today() # TODO tz awareness
         day, hour = DAYS[now.weekday()], now.strftime("%H:%M")
     else:
         day, hour = when.split(" ")
 
+    results = []
+    
     for node in r.nodes:
         item = { 'name': node.tags['name'],
                  'url': f"https://www.openstreetmap.org/node/{node.id}",
