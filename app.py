@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-# Run with:
-#  $ FLASK_APP=test.py flask run
-
 import overpy
 from osm_time.opening_hours import OpeningHours
 from flask import Flask, render_template, request
@@ -23,18 +20,21 @@ def hours():
     results = []
     
     if when == "now":
-        now = datetime.datetime.today()    
-        today = DAYS[now.weekday()]
-        now = now.strftime("%H:%M")
+        now = datetime.datetime.today() # TODO tz awareness
+        day, hour = DAYS[now.weekday()], now.strftime("%H:%M")
     else:
-        today, now = when.split(" ")
-    print(today, now)
+        day, hour = when.split(" ")
+
     for node in r.nodes:
         item = { 'name': node.tags['name'],
                  'url': f"https://www.openstreetmap.org/node/{node.id}",
                  'hours': node.tags['opening_hours'].split(';'),
-                 'open': OpeningHours(node.tags['opening_hours']).is_open(today, now),
+                 'open': OpeningHours(node.tags['opening_hours']).is_open(day, hour),
                }
         results.append(item)
 
     return render_template('tabla.html', nodes=results)
+    
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
+    
