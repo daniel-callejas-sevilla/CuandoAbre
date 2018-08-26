@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import overpy
-from osm_time.opening_hours import OpeningHours
+from osm_time.opening_hours import OpeningHours, ParseException
 from flask import Flask, render_template, request
 import datetime
 app = Flask(__name__)
@@ -26,10 +26,18 @@ def hours():
     results = []
     
     for node in r.nodes:
+        try: 
+            if OpeningHours(node.tags['opening_hours']).is_open(day, hour):
+                open = 'open'
+            else:
+                open = 'closed'
+        except ParseException as e:
+            open = 'unknown'
+           
         item = { 'name': node.tags['name'],
                  'url': f"https://www.openstreetmap.org/node/{node.id}",
                  'hours': node.tags['opening_hours'].split(';'),
-                 'open': OpeningHours(node.tags['opening_hours']).is_open(day, hour),
+                 'open': open,
                }
         results.append(item)
 

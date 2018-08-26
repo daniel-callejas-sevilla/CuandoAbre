@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>¿Cuando Abre? - Tabla</title>
+<title>¿Cuándo Abre? - Tabla</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style type="text/css">
 tr:nth-child(even) {background: #CCC}
@@ -32,17 +32,17 @@ updateLocation();
 <th>¿Abierto?</th>
 </tr>
 
+{% set opening_state = {'open': '<span style="color: green;">✓</span>', 
+                        'closed': '<span style="color: red;">✘</span>', 
+                        'unknown': '?'}
+   
+%}
+
 {% for node in nodes %}
 <tr>
 <td><a href="{{ node.url }}">{{ node.name }}</a></td>
 <td>{{ node.hours }}</td>
-<td>
-    {% if node.open %}
-        <span style="color: green;">✓</span>
-    {% else %}
-        <span style="color: red;">✘</span>
-    {% endif %}
-</td>
+<td>{{ opening_state[node.open]|safe }}</td>
 </tr>
 {% endfor %}
 
