@@ -20,30 +20,48 @@ function updateLocation() {
     }
 }
 updateLocation();
+function doFiltering() {
+    value = document.getElementById("filterBox").value.toUpperCase();
+    rows = document.getElementById("hoursTable").getElementsByTagName("tr");
+    
+    for (i = 0; i < rows.length; i++) {
+        cell = rows[i].getElementsByTagName("td")[0];
+        if (cell) {
+            if (cell.innerHTML.toUpperCase().indexOf(value) > -1) {
+                rows[i].style.display = "table-row";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+}
 </script>
 </head>
 <body>
-<div id="testPos" style="display: hidden;">(Esperando una localización…)</div>
-<table>
+<div id="testPos" style="display: none;">(Esperando una localización…)</div>
 
+<table id="hoursTable">
 <tr>
 <th>Lugar</th>
 <th>Horarios</th>
 <th>¿Abierto?</th>
 </tr>
-
+<tr>
+<th><input type="text" id="filterBox" onkeyup="doFiltering()" placeholder="Filtrar…"/></th>
+<th></th>
+<th></th>
+</tr>
 {% set opening_state = {'open': '<span style="color: green;">✓</span>', 
                         'closed': '<span style="color: red;">✘</span>', 
                         'unknown': '?'}
    
 %}
-
 {% for node in nodes %}
-<tr>
-<td><a href="{{ node.url }}">{{ node.name }}</a></td>
-<td>{{ node.hours }}</td>
-<td>{{ opening_state[node.open]|safe }}</td>
-</tr>
+ <tr>
+  <td><a href="{{ node.url }}">{{ node.name }}</a></td>
+  <td>{{ node.hours }}</td>
+  <td>{{ opening_state[node.open]|safe }}</td>
+ </tr>
 {% endfor %}
 
 </table>
