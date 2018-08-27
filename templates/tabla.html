@@ -43,8 +43,8 @@ function doFiltering() {
 <table id="hoursTable">
 <tr>
 <th>Lugar</th>
-<th>Horarios</th>
 <th>¿Abierto?</th>
+<th>Horarios</th>
 </tr>
 <tr>
 <th><input type="text" id="filterBox" onkeyup="doFiltering()" placeholder="Filtrar…"/></th>
@@ -59,8 +59,8 @@ function doFiltering() {
 {% for node in nodes %}
  <tr>
   <td><a href="{{ node.url }}">{{ node.name }}</a></td>
-  <td>{{ node.hours }}</td>
   <td>{{ opening_state[node.open]|safe }}</td>
+  <td>{{ node.hours }}</td>
  </tr>
 {% endfor %}
 
