@@ -35,6 +35,11 @@ function doFiltering() {
         }
     }
 }
+function pinNode(id) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "/recordar?nodeId=" + id, true)
+    xhttp.send();
+}
 </script>
 </head>
 <body>
@@ -42,23 +47,51 @@ function doFiltering() {
 
 <table id="hoursTable">
 <tr>
+<th><!-- pin button --></th>
+<th>Tipo</th>
 <th>Lugar</th>
 <th>¿Abierto?</th>
 <th>Horarios</th>
 </tr>
 <tr>
+<th></th>
+<th></th>
 <th><input type="text" id="filterBox" onkeyup="doFiltering()" placeholder="Filtrar…"/></th>
 <th></th>
 <th></th>
 </tr>
 {% set opening_state = {'open': '<span style="color: green;">✓</span>', 
                         'closed': '<span style="color: red;">✘</span>', 
-                        'unknown': '?'}
-   
+                        'unknown': '?'
+                       }
+%}
+{%   
+   set typeNames = {
+                'fuel': 'Station Essence',
+                'convenience': 'Superette',
+                'post_office': 'Bureau de Poste',
+                'bakery': 'Boulangerie',
+                'tobacco': 'Tabac',
+                'pharmacy': 'Pharmacie',
+                'restaurant': 'Restaurant',
+                'bank': 'Banque',
+                'library': 'Bibliothèque',
+                'cheese': 'Fromagerie',
+                'dry_cleaning': 'Pressing',
+                'wine': 'Cave à Vins',
+                'veterinary': 'Vétérinaire',
+                'optician': 'Opticien',
+                'funeral_directors': 'Services Funeraires',
+                'hairdresser': 'Coiffeur',
+                'gift': 'Cadeaux',
+                'florist': 'Fleuriste'
+               }
 %}
 {% for node in nodes %}
  <tr>
-  <td><a href="{{ node.url }}">{{ node.name }}</a></td>
+  <td><button disabled="disabled" onclick="pinNode({{ node.id }});">Pin</button></td>
+  <td>{{ typeNames[node.type]|safe }}</td>
+  <td><a href="{{ node.url }}">{{ node.name|default('(nodo sin nombre)') }}</a></td>
   <td>{{ opening_state[node.open]|safe }}</td>
   <td>{{ node.hours }}</td>
  </tr>
