@@ -20,12 +20,12 @@ function updateLocation() {
     }
 }
 updateLocation();
-function doFiltering() {
-    value = document.getElementById("filterBox").value.toUpperCase();
+function doFiltering(filterTextElement, column) {
+    value = document.getElementById(filterTextElement).value.toUpperCase();
     rows = document.getElementById("hoursTable").getElementsByTagName("tr");
     
     for (i = 0; i < rows.length; i++) {
-        cell = rows[i].getElementsByTagName("td")[0];
+        cell = rows[i].getElementsByTagName("td")[column];
         if (cell) {
             if (cell.innerHTML.toUpperCase().indexOf(value) > -1) {
                 rows[i].style.display = "table-row";
@@ -56,7 +56,7 @@ function pinNode(id) {
 <tr>
 <th></th>
 <th></th>
-<th><input type="text" id="filterBox" onkeyup="doFiltering()" placeholder="Filtrar…"/></th>
+<th><input type="text" id="filterBox" onkeyup="doFiltering('filterBox', 2/* Name column */);" placeholder="Filtrar…"/></th>
 <th></th>
 <th></th>
 </tr>
