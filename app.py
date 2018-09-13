@@ -62,9 +62,8 @@ def getTypeFromTags(tags):
 
 @app.route("/")
 def hours():
-#    rect = request.args.get('rect', '43.572,7.014,43.578,7.026')
-    center = request.args.get('center', '43.5744,7.0192')
-    radius = 0.005
+    center = request.args.get('center', '43.5744,7.0192').replace("%2C", ",")
+    radius = 0.01
     rect = makeRect(center, radius)
     when = request.args.get('when', 'now')
     pinned = getPinned()
