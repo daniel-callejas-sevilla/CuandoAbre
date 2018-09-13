@@ -3,7 +3,11 @@
 <head>
 <title>¿Cuándo Abre? - Tabla</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
 <style type="text/css">
+body {
+    font-family: sans-serif;
+}
 tr:nth-child(even) {background: #CCC}
 tr:nth-child(odd) {background: #FFF}
 </style>
@@ -12,14 +16,21 @@ var loc;
 function updateLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (p){
-            loc = p;
-            x = document.getElementById('testPos');
-            x.innerHTML = "Latitud: " + loc.coords.latitude + "<br/>Longitud: " +
-            loc.coords.longitude;
+            loc /*global*/ = p;
+            b = document.getElementById('posButton');
+            b.innerHTML = "◉";
+            b.disabled = false;
+            // loc.coords.latitude + "<br/>"+ loc.coords.longitude;
         });
     }
 }
-updateLocation();
+function reloadAt(l) {
+    let u = new URL(window.location.href);
+    p = u.searchParams;
+    p.delete('center');
+    p.append('center', ''+l.coords.latitude+','+l.coords.longitude);
+    window.location.href = u;
+}
 function doFiltering(filterTextElement, column) {
     value = document.getElementById(filterTextElement).value.toUpperCase();
     rows = document.getElementById("hoursTable").getElementsByTagName("tr");
@@ -42,8 +53,11 @@ function pinNode(id) {
 }
 </script>
 </head>
-<body>
-<div id="testPos" style="display: none;">(Esperando una localización…)</div>
+<body onload="updateLocation();">
+<h1>¿Cuándo Abre?
+<button id="posButton" disabled="disabled" title="Buscar alrededor de la
+posición actual" onclick="reloadAt(loc);">(Esperando una localización…)</button>
+</h1>
 
 <table id="hoursTable">
 <tr>
