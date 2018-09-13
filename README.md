@@ -3,6 +3,9 @@ Tool to show opening hours of the shops in an area.
 
 Work in progress
 
+# TODO
+* Avoid displaying nodes with access=private
+
 # Features to add
 
 * Show a popup with a map when clicking on a name
