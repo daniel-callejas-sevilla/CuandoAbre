@@ -91,6 +91,7 @@ def hours():
            
         item = { 'name': node.tags.get('name'),
                  'url': f"https://www.openstreetmap.org/node/{node.id}",
+                 # TODO Better URL with ideas from https://wiki.openstreetmap.org/wiki/Browsing#bbox_URLs
                  'hours': node.tags['opening_hours'].split(';'),
                  'open': open,
                  'type': getTypeFromTags(node.tags),
