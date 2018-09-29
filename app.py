@@ -88,10 +88,9 @@ def hours():
                 open = 'closed'
         except ParseException as e:
             open = 'unknown'
-           
+
         item = { 'name': node.tags.get('name'),
-                 'url': f"https://www.openstreetmap.org/node/{node.id}",
-                 # TODO Better URL with ideas from https://wiki.openstreetmap.org/wiki/Browsing#bbox_URLs
+                 'url':  f'https://www.openstreetmap.org/?mlat={node.lat}&mlon={node.lon}#map=19/{node.lat}/{node.lon}',
                  'hours': node.tags['opening_hours'].split(';'),
                  'open': open,
                  'type': getTypeFromTags(node.tags),
