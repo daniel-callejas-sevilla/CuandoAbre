@@ -11,5 +11,6 @@ flask = "*"
 overpy = "*"
 osm-opening-hours = "*"
 gunicorn = "*"
+osmapi = "*"
 
 [dev-packages]

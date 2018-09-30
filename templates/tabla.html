@@ -18,7 +18,7 @@ function updateLocation() {
         navigator.geolocation.getCurrentPosition(function (p){
             loc /*global*/ = p;
             b = document.getElementById('posButton');
-            b.innerHTML = "◉";
+            b.innerHTML = "🗘";
             b.disabled = false;
             // loc.coords.latitude + "<br/>"+ loc.coords.longitude;
         });
@@ -51,29 +51,13 @@ function pinNode(id) {
     xhttp.open("POST", "/recordar?nodeId=" + id, true)
     xhttp.send();
 }
+function unpinNode(id) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", "/olvidar?nodeId=" + id, true)
+    xhttp.send();
+}
 </script>
 </head>
-<body onload="updateLocation();">
-<h1>¿Cuándo Abre?
-<button id="posButton" disabled="disabled" title="Buscar alrededor de la
-posición actual" onclick="reloadAt(loc);">(Esperando una localización…)</button>
-</h1>
-
-<table id="hoursTable">
-<tr>
-<th><!-- pin button --></th>
-<th>Tipo</th>
-<th>Lugar</th>
-<th>¿Abierto?</th>
-<th>Horarios</th>
-</tr>
-<tr>
-<th></th>
-<th></th>
-<th><input type="text" id="filterBox" onkeyup="doFiltering('filterBox', 2/* Name column */);" placeholder="Filtrar…"/></th>
-<th></th>
-<th></th>
-</tr>
 {% set opening_state = {'open': '<span style="color: green;">✔</span>', 
                         'closed': '<span style="color: red;">✘</span>', 
                         'unknown': '?'
@@ -132,9 +116,53 @@ posición actual" onclick="reloadAt(loc);">(Esperando una localización…)</but
                 'computer': "Magasin d'Informatique"
                }
 %}
+<body onload="updateLocation();">
+<h1>Lugares recordados</h1>
+<table id="pinnedTable">
+<tr>
+<th><!-- unpin button --></th>
+<th>Tipo</th>
+<th>Lugar</th>
+<th>¿Abierto?</th>
+<th>Horarios</th>
+</tr>
+{% for node in pinned %}
+ <tr>
+  <td><button onclick="unpinNode({{ node.id }}); this.parentElement.parentElement.remove();">Unpin</button></td>
+  <td>{{ typeNames[node.type]|safe }}</td>
+  <td><a href="{{ node.url }}">{{ node.name|default('(nodo sin nombre)') }}</a></td>
+  <td>{{ opening_state[node.open]|safe }}</td>
+  <td>{{ node.hours }}</td>
+ </tr>
+{% else %}
+  <tr><td colspan='5'><em>Ningún lugar fijado. Utiliza el botón
+  <button>Pin</button> para fijar lugares.</td></tr>
+{% endfor %}
+</table>
+
+<h1>Lugares cerca de la posición…
+<button id="posButton" disabled="disabled" title="Buscar alrededor de la
+posición actual" onclick="reloadAt(loc);">(Esperando una localización…)</button>
+</h1>
+
+<table id="hoursTable">
+<tr>
+<th><!-- pin button --></th>
+<th>Tipo</th>
+<th>Lugar</th>
+<th>¿Abierto?</th>
+<th>Horarios</th>
+</tr>
+<tr>
+<th></th>
+<th></th>
+<th><input type="text" id="filterBox" onkeyup="doFiltering('filterBox', 2/* Name column */);" placeholder="Filtrar…"/></th>
+<th></th>
+<th></th>
+</tr>
 {% for node in nodes %}
  <tr>
-  <td><button disabled="disabled" onclick="pinNode({{ node.id }});">Pin</button></td>
+  <td><button onclick="pinNode({{ node.id }});">Pin</button></td>
   <td>{{ typeNames[node.type]|safe }}</td>
   <td><a href="{{ node.url }}">{{ node.name|default('(nodo sin nombre)') }}</a></td>
   <td>{{ opening_state[node.open]|safe }}</td>

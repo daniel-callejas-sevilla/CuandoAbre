@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import overpy
+import osmapi
 from osm_time.opening_hours import OpeningHours, ParseException
 from flask import Flask, render_template, request, redirect, url_for, make_response
 import datetime
@@ -22,6 +23,21 @@ def remember():
     print(f"Current: {current}")
     new = string_as_int_or_zero(request.args.get('nodeId'))
     current.add(new)
+    
+    resp = make_response("ok")
+    
+    resp.set_cookie('nodeIds', ",".join( (str(nodeId) for nodeId in current) ) )
+    
+    return resp
+
+@app.route("/olvidar", methods=['POST']) # TODO same remark as remember()
+def olvidar():
+    current = getPinned()
+    forget = string_as_int_or_zero(request.args.get('nodeId'))
+    try:
+        current.remove(forget)
+    except KeyError:
+        pass
     
     resp = make_response("ok")
     
@@ -60,6 +76,25 @@ def getTypeFromTags(tags):
         
     return "unknown"
 
+def makeNode(name, lat, lon, id, type, hours, day, hour):
+    try: 
+        if OpeningHours(hours).is_open(day, hour):
+            open = 'open'
+        else:
+            open = 'closed'
+    except ParseException as e:
+        open = 'unknown'
+
+    return { 
+        'name': name,
+        'url': f'https://www.openstreetmap.org/?mlat={lat}&mlon={lon}#map=19/{lat}/{lon}',
+        'hours': hours.split(';'),
+        'open': open,
+        'id': id,
+        'type': type,
+    }
+
+
 @app.route("/")
 def hours():
     center = request.args.get('center', '43.5744,7.0192').replace("%2C", ",")
@@ -68,37 +103,38 @@ def hours():
     when = request.args.get('when', 'now')
     pinned = getPinned()
     
-    o = overpy.Overpass()
-    q = f"node[opening_hours]({rect});out;"   # TODO retrieve also ways (eg. a whole building is a shop)
-    r = o.query(q)
-
     if when == "now":
         now = datetime.datetime.today() # TODO tz awareness
         day, hour = DAYS[now.weekday()], now.strftime("%H:%M")
     else:
         day, hour = when.split(" ")
 
+    osm = osmapi.OsmApi()    
+    pinnedResults = []
+    for p in pinned:
+        node = osm.NodeGet(p)
+        pinnedResults.append( makeNode(node['tag']['name'],
+                                       node['lat'], node['lon'],
+                                       node['id'],
+                                       getTypeFromTags(node['tag']),
+                                       node['tag']['opening_hours'],
+                                       day, hour )
+                            )
+                                       
+    o = overpy.Overpass()
+    q = f"node[opening_hours]({rect});out;"   # TODO retrieve also ways (eg. a whole building is a shop)
+    r = o.query(q)
     results = []
-    
     for node in r.nodes:
-        try: 
-            if OpeningHours(node.tags['opening_hours']).is_open(day, hour):
-                open = 'open'
-            else:
-                open = 'closed'
-        except ParseException as e:
-            open = 'unknown'
+        results.append( makeNode(node.tags.get('name'), 
+                                 node.lat, node.lon, 
+                                 node.id, 
+                                 getTypeFromTags(node.tags), 
+                                 node.tags['opening_hours'],
+                                 day, hour )
+                      )
 
-        item = { 'name': node.tags.get('name'),
-                 'url':  f'https://www.openstreetmap.org/?mlat={node.lat}&mlon={node.lon}#map=19/{node.lat}/{node.lon}',
-                 'hours': node.tags['opening_hours'].split(';'),
-                 'open': open,
-                 'type': getTypeFromTags(node.tags),
-                 'id': node.id,
-               }
-        results.append(item)
-
-    return render_template('tabla.html', nodes=results)
+    return render_template('tabla.html', nodes=results, pinned=pinnedResults)
     
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
