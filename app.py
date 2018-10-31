@@ -5,6 +5,7 @@ import osmapi
 from osm_time.opening_hours import OpeningHours, ParseException
 from flask import Flask, render_template, request, redirect, url_for, make_response
 import datetime
+from geopy.distance import VincentyDistance
 app = Flask(__name__)
 
 DAYS = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'] # OSM opening_hours format
@@ -73,10 +74,12 @@ def getTypeFromTags(tags):
         return tags["amenity"]
     elif "shop" in keys:
         return tags["shop"]
+    elif "healthcare" in keys:
+        return tags["healthcare"]
         
     return "unknown"
 
-def makeNode(name, lat, lon, id, type, hours, day, hour):
+def makeNode(name, lat, lon, id, type, hours, day, hour, center):
     try: 
         if OpeningHours(hours).is_open(day, hour):
             open = 'open'
@@ -92,6 +95,7 @@ def makeNode(name, lat, lon, id, type, hours, day, hour):
         'open': open,
         'id': id,
         'type': type,
+        'distance': VincentyDistance( (lat, lon), map(float, center.split(",")) ).m
     }
 
 
@@ -118,7 +122,8 @@ def hours():
                                        node['id'],
                                        getTypeFromTags(node['tag']),
                                        node['tag']['opening_hours'],
-                                       day, hour )
+                                       day, hour,
+                                       center )
                             )
                                        
     o = overpy.Overpass()
@@ -131,7 +136,8 @@ def hours():
                                  node.id, 
                                  getTypeFromTags(node.tags), 
                                  node.tags['opening_hours'],
-                                 day, hour )
+                                 day, hour,
+                                 center )
                       )
 
     return render_template('tabla.html', nodes=results, pinned=pinnedResults)

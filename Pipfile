@@ -12,5 +12,6 @@ overpy = "*"
 osm-opening-hours = "*"
 gunicorn = "*"
 osmapi = "*"
+geopy = "*"
 
 [dev-packages]

@@ -113,7 +113,8 @@ function unpinNode(id) {
                 'chocolate': 'Vente de Chocolate',
                 'clothes': 'Magasin de Vêtements', 
                 'collector': "Magasin d'Articles de Collection",
-                'computer': "Magasin d'Informatique"
+                'computer': "Magasin d'Informatique",
+                'laboratory': 'Laboratoire'
                }
 %}
 <body onload="updateLocation();">
@@ -152,6 +153,7 @@ posición actual" onclick="reloadAt(loc);">(Esperando una localización…)</but
 <th>Lugar</th>
 <th>¿Abierto?</th>
 <th>Horarios</th>
+<th>Distancia</th>
 </tr>
 <tr>
 <th></th>
@@ -159,14 +161,16 @@ posición actual" onclick="reloadAt(loc);">(Esperando una localización…)</but
 <th><input type="text" id="filterBox" onkeyup="doFiltering('filterBox', 2/* Name column */);" placeholder="Filtrar…"/></th>
 <th></th>
 <th></th>
+<th></th>
 </tr>
-{% for node in nodes %}
+{% for node in nodes|sort(attribute='distance') %}
  <tr>
   <td><button onclick="pinNode({{ node.id }});">Pin</button></td>
   <td>{{ typeNames[node.type]|safe }}</td>
   <td><a href="{{ node.url }}">{{ node.name|default('(nodo sin nombre)') }}</a></td>
   <td>{{ opening_state[node.open]|safe }}</td>
   <td>{{ node.hours }}</td>
+  <td>{{ ( (node.distance / 10)|round|int ) * 10 }}&nbsp;m</td>
  </tr>
 {% endfor %}
 
