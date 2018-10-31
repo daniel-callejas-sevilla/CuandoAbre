@@ -128,7 +128,7 @@ function unpinNode(id) {
 </tr>
 {% for node in pinned %}
  <tr>
-  <td><button onclick="unpinNode({{ node.id }}); this.parentElement.parentElement.remove();">Unpin</button></td>
+  <td><button onclick="unpinNode({{ node.id }}); this.parentElement.parentElement.remove();">🗑</button></td>
   <td>{{ typeNames[node.type]|safe }}</td>
   <td><a href="{{ node.url }}">{{ node.name|default('(nodo sin nombre)') }}</a></td>
   <td>{{ opening_state[node.open]|safe }}</td>
@@ -136,7 +136,7 @@ function unpinNode(id) {
  </tr>
 {% else %}
   <tr><td colspan='5'><em>Ningún lugar fijado. Utiliza el botón
-  <button>Pin</button> para fijar lugares.</td></tr>
+  <button>📌</button> para fijar lugares.</td></tr>
 {% endfor %}
 </table>
 
@@ -162,7 +162,7 @@ posición actual" onclick="reloadAt(loc);">(Esperando una localización…)</but
 </tr>
 {% for node in nodes %}
  <tr>
-  <td><button onclick="pinNode({{ node.id }});">Pin</button></td>
+  <td><button onclick="pinNode({{ node.id }});">📌</button></td> 
   <td>{{ typeNames[node.type]|safe }}</td>
   <td><a href="{{ node.url }}">{{ node.name|default('(nodo sin nombre)') }}</a></td>
   <td>{{ opening_state[node.open]|safe }}</td>
